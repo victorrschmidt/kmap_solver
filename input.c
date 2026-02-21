@@ -9,13 +9,13 @@
 static const char *VARIABLE_CHARS = ACCEPTED_VARIABLE_CHARS;
 static const size_t VARIABLE_CHARS_COUNT = strlen(ACCEPTED_VARIABLE_CHARS);
 
-// Creates a Buffer struct with a specified size for its char *content
-Buffer *createBuffer(size_t size) {
+// Creates a Buffer struct
+Buffer *createBuffer() {
     Buffer *buffer = malloc(sizeof(Buffer));
     if (buffer == NULL) {
         endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
     }
-    buffer->size = size;
+    buffer->size = MAX_BUFFER_SIZE;
     buffer->content = calloc(buffer->size, sizeof(char));
     if (buffer->content == NULL)  {
         endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
@@ -59,8 +59,8 @@ void freeVariableSet(VariableSet *variable_set) {
 }
 
 // Reads a line from a text file and saves its content in the Buffer content
-void readInput(Buffer *buffer, const char *file_name) {
-    FILE *input_file = fopen(file_name, "r");
+void readInput(Buffer *buffer) {
+    FILE *input_file = fopen(INPUT_FILE_NAME, "r");
     if (input_file == NULL) {
         endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
     }
@@ -143,26 +143,23 @@ void checkValidProductExpressions(Buffer *buffer, VariableSet *variable_set) {
     size_t l = 0;
     for (size_t r = 1; r < buffer->length; r++) {
         if (buffer->content[r] == SUM_CHAR) {
-            if (!isValidProductExpression(variable_set, product_id, buffer->content, l, r - 1)) {
-                endProgram(DEFAULT_INVALID_PRODUCT_ERROR_MESSAGE);
-            }
+            checkValidProductExpression(variable_set, product_id, buffer->content, l, r - 1);
             product_id++;
             l = r + 1;
             r++;
         }
     }
-    if (!isValidProductExpression(variable_set, product_id, buffer->content, l, buffer->length - 1)) {
-        endProgram(DEFAULT_INVALID_PRODUCT_ERROR_MESSAGE);
-    }
+    checkValidProductExpression(variable_set, product_id, buffer->content, l, buffer->length - 1);
 }
 
 // Checks if a product expression is valid
-bool isValidProductExpression(VariableSet *set, size_t line, char *string, size_t l, size_t r) {
+void checkValidProductExpression(VariableSet *set, size_t line, char *string, size_t l, size_t r) {
     bool reading_not = false;
+    size_t variable_count = 0;
     for (size_t i = l; i <= r; i++) {
         char c = string[i];
         if (c != NEGATION_CHAR && !isValidVariableChar(c)) {
-            endProgram(DEFAULT_INVALID_PRODUCT_ERROR_MESSAGE);
+            endProgram(DEFAULT_INVALID_VARIABLE_ERROR_MESSAGE);
         }
         if (c == NEGATION_CHAR) {
             reading_not = true;
@@ -172,9 +169,15 @@ bool isValidProductExpression(VariableSet *set, size_t line, char *string, size_
             endProgram(DEFAULT_REPETEAD_VARIABLE_ERROR_MESSAGE);
         }
         set->content[line][(size_t) c] = true;
+        variable_count++;
         reading_not = false;
     }
-    return !reading_not;
+    if (reading_not) {
+        endProgram(DEFAULT_EMPTY_NEGATION_ERROR_MESSAGE);
+    }
+    if (variable_count < 2) {
+        endProgram(DEFAULT_SINGLE_VARIABLE_ERROR_MESSAGE);
+    }
 }
 
 // Checks if accepted variable chars string contains c

@@ -1,19 +1,20 @@
 #include "program.h"
 #include "input.h"
+#include "kmap.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <stdbool.h>
-#include <string.h>
 
 int main() {
     assertProgram();
-    Buffer *buffer = createBuffer(MAX_BUFFER_SIZE);
 
-    readInput(buffer, INPUT_FILE_NAME);
+    Buffer *buffer = createBuffer();
+    readInput(buffer);
+
+    printf("Checking expression...\n");
     validateExpression(buffer);
+    printf("Expression checked.\n");
 
-    printf("Valid expression.\n");
+    Kmap *kmap = createKmap(buffer->content, buffer->length);
+    freeBuffer(buffer);
 
     /*
         lines and columns
@@ -43,7 +44,7 @@ int main() {
 
     */
 
-    freeBuffer(buffer);
+    freeKmap(kmap);
 
 	return 0;
 }
