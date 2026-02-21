@@ -6,9 +6,9 @@
 #include <stdbool.h>
 #include <string.h>
 
-// Creates a Buffer struct with a specified size for char *content
+// Creates a Buffer struct with a specified size for its char *content
 Buffer *createBuffer(size_t size) {
-    Buffer *buffer = calloc(1, sizeof(Buffer));
+    Buffer *buffer = malloc(sizeof(Buffer));
     if (buffer == NULL) {
         endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
     }
@@ -20,7 +20,7 @@ Buffer *createBuffer(size_t size) {
     return buffer;
 }
 
-// Creates a VariableSet struct with a specified size for bool **content
+// Creates a VariableSet struct with a specified size for its bool **content
 VariableSet *createVariableSet(size_t size) {
     VariableSet *variable_set = malloc(sizeof(VariableSet));
     if (variable_set == NULL) {
@@ -32,7 +32,7 @@ VariableSet *createVariableSet(size_t size) {
         endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
     }
     for (size_t i = 0; i < variable_set->size; i++) {
-        variable_set->content[i] = calloc(26, sizeof(bool));
+        variable_set->content[i] = calloc(VALID_VARIABLE_COUNT, sizeof(bool));
         if (variable_set->content[i] == NULL) {
             endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
         }
@@ -55,7 +55,7 @@ void freeVariableSet(VariableSet *variable_set) {
     free(variable_set);
 }
 
-// Reads a line from a text file and saves the content in the Buffer content
+// Reads a line from a text file and saves its content in the Buffer content
 void readInput(Buffer *buffer, const char *file_name) {
     FILE *input_file = fopen(file_name, "r");
     if (input_file == NULL) {
@@ -65,7 +65,7 @@ void readInput(Buffer *buffer, const char *file_name) {
     fclose(input_file);
     buffer->length = strlen(buffer->content);
     if (buffer->length == 0) {
-        endProgram("Empty input error.");
+        endProgram(DEFAULT_EMPTY_INPUT_ERROR_MESSAGE);
     }
 }
 
@@ -109,17 +109,16 @@ void validateExpression(Buffer *buffer) {
     checkValidProductExpressions(buffer, variable_set);
     checkEqualVariablesBetweenProducts(variable_set);
     freeVariableSet(variable_set);
-    printf("OK!\n");
 }
 
 // Checks if the Buffer content contains a valid sum between seperate expressions
 void checkValidSumExpression(Buffer *buffer) {
     if (buffer->content[0] == '+' || buffer->content[buffer->length - 1] == '+') {
-        endProgram("Error: Invalid sum expression.\nCan't start and/or end with '+'.");
+        endProgram(DEFAULT_SUM_SYMBOL_START_END_ERROR_MESSAGE);
     }
     for (size_t i = 0; i < buffer->length - 1; i++) {
         if (buffer->content[i] == '+' && buffer->content[i + 1] == '+') {
-            endProgram("Error: Invalid sum expression.\nEmpty product between two '+'.");
+            endProgram(DEFAULT_SUM_SYMBOL_EMPTY_ERROR_MESSAGE);
         }
     }
 }
@@ -142,7 +141,7 @@ void checkValidProductExpressions(Buffer *buffer, VariableSet *variable_set) {
     for (size_t r = 1; r < buffer->length; r++) {
         if (buffer->content[r] == '+') {
             if (!isValidProductExpression(variable_set, product_id, buffer->content, l, r - 1)) {
-                endProgram("Error: Invalid product expression.");
+                endProgram(DEFAULT_INVALID_PRODUCT_ERROR_MESSAGE);
             }
             product_id++;
             l = r + 1;
@@ -150,7 +149,7 @@ void checkValidProductExpressions(Buffer *buffer, VariableSet *variable_set) {
         }
     }
     if (!isValidProductExpression(variable_set, product_id, buffer->content, l, buffer->length - 1)) {
-        endProgram("Error: Invalid product expression.");
+        endProgram(DEFAULT_INVALID_PRODUCT_ERROR_MESSAGE);
     }
 }
 
@@ -160,14 +159,14 @@ bool isValidProductExpression(VariableSet *set, size_t line, char *string, size_
     for (size_t i = l; i <= r; i++) {
         char c = string[i];
         if (c != '!' && (c < 'a' || 'z' < c)) {
-            endProgram("Error: Invalid product expression.");
+            endProgram(DEFAULT_INVALID_PRODUCT_ERROR_MESSAGE);
         }
         if (c == '!') {
             reading_not = true;
             continue;
         }
         if (set->content[line][c - 'a']) {
-            endProgram("Error: Invalid product expression.\nRepeated variable on product.");
+            endProgram(DEFAULT_REPETEAD_VARIABLE_ERROR_MESSAGE);
         }
         set->content[line][c - 'a'] = true;
         reading_not = false;
@@ -181,7 +180,7 @@ void checkEqualVariablesBetweenProducts(VariableSet *variable_set) {
         bool pivot = variable_set->content[0][i];
         for (size_t j = 1; j < variable_set->size; j++) {
             if (variable_set->content[j][i] != pivot) {
-                endProgram("Error: Invalid product expression.\nAll products must have the same variables.");
+                endProgram(DEFAULT_VARIABLE_SET_DIFFERS_ERROR_MESSAGE);
             }
         }
     }

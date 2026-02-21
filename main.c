@@ -14,6 +14,8 @@ int main() {
     readInput(buffer, INPUT_FILE_NAME);
     validateExpression(buffer);
 
+    printf("Valid expression.\n");
+
     /*
         lines and columns
 
