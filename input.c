@@ -6,6 +6,9 @@
 #include <stdbool.h>
 #include <string.h>
 
+static const char *VARIABLE_CHARS = ACCEPTED_VARIABLE_CHARS;
+static const size_t VARIABLE_CHARS_COUNT = strlen(ACCEPTED_VARIABLE_CHARS);
+
 // Creates a Buffer struct with a specified size for its char *content
 Buffer *createBuffer(size_t size) {
     Buffer *buffer = malloc(sizeof(Buffer));
@@ -32,7 +35,7 @@ VariableSet *createVariableSet(size_t size) {
         endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
     }
     for (size_t i = 0; i < variable_set->size; i++) {
-        variable_set->content[i] = calloc(VALID_VARIABLE_COUNT, sizeof(bool));
+        variable_set->content[i] = calloc(MAX_ASCII_DECIMAL_VALUE + 1, sizeof(bool));
         if (variable_set->content[i] == NULL) {
             endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
         }
@@ -113,11 +116,11 @@ void validateExpression(Buffer *buffer) {
 
 // Checks if the Buffer content contains a valid sum between seperate expressions
 void checkValidSumExpression(Buffer *buffer) {
-    if (buffer->content[0] == '+' || buffer->content[buffer->length - 1] == '+') {
+    if (buffer->content[0] == SUM_CHAR || buffer->content[buffer->length - 1] == SUM_CHAR) {
         endProgram(DEFAULT_SUM_SYMBOL_START_END_ERROR_MESSAGE);
     }
     for (size_t i = 0; i < buffer->length - 1; i++) {
-        if (buffer->content[i] == '+' && buffer->content[i + 1] == '+') {
+        if (buffer->content[i] == SUM_CHAR && buffer->content[i + 1] == SUM_CHAR) {
             endProgram(DEFAULT_SUM_SYMBOL_EMPTY_ERROR_MESSAGE);
         }
     }
@@ -127,7 +130,7 @@ void checkValidSumExpression(Buffer *buffer) {
 size_t getProductCount(Buffer *buffer) {
     size_t product_count = 0;
     for (size_t i = 0; i < buffer->length; i++) {
-        if (buffer->content[i] == '+') {
+        if (buffer->content[i] == SUM_CHAR) {
             product_count++;
         }
     }
@@ -139,7 +142,7 @@ void checkValidProductExpressions(Buffer *buffer, VariableSet *variable_set) {
     size_t product_id = 0;
     size_t l = 0;
     for (size_t r = 1; r < buffer->length; r++) {
-        if (buffer->content[r] == '+') {
+        if (buffer->content[r] == SUM_CHAR) {
             if (!isValidProductExpression(variable_set, product_id, buffer->content, l, r - 1)) {
                 endProgram(DEFAULT_INVALID_PRODUCT_ERROR_MESSAGE);
             }
@@ -158,25 +161,35 @@ bool isValidProductExpression(VariableSet *set, size_t line, char *string, size_
     bool reading_not = false;
     for (size_t i = l; i <= r; i++) {
         char c = string[i];
-        if (c != '!' && (c < 'a' || 'z' < c)) {
+        if (c != NEGATION_CHAR && !isValidVariableChar(c)) {
             endProgram(DEFAULT_INVALID_PRODUCT_ERROR_MESSAGE);
         }
-        if (c == '!') {
+        if (c == NEGATION_CHAR) {
             reading_not = true;
             continue;
         }
-        if (set->content[line][c - 'a']) {
+        if (set->content[line][(size_t) c]) {
             endProgram(DEFAULT_REPETEAD_VARIABLE_ERROR_MESSAGE);
         }
-        set->content[line][c - 'a'] = true;
+        set->content[line][(size_t) c] = true;
         reading_not = false;
     }
     return !reading_not;
 }
 
+// Checks if accepted variable chars string contains c
+bool isValidVariableChar(char c) {
+    for (size_t i = 0; i < VARIABLE_CHARS_COUNT; i++) {
+        if (c == VARIABLE_CHARS[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // Checks if all products share the same set of variables
 void checkEqualVariablesBetweenProducts(VariableSet *variable_set) {
-    for (size_t i = 0; i < 26; i++) {
+    for (size_t i = 0; i <= MAX_ASCII_DECIMAL_VALUE; i++) {
         bool pivot = variable_set->content[0][i];
         for (size_t j = 1; j < variable_set->size; j++) {
             if (variable_set->content[j][i] != pivot) {

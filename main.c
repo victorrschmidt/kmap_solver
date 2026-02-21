@@ -5,10 +5,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <string.h>
-#define INPUT_FILE_NAME "notation.txt"
-#define MAX_BUFFER_SIZE 128
 
 int main() {
+    assertProgram();
     Buffer *buffer = createBuffer(MAX_BUFFER_SIZE);
 
     readInput(buffer, INPUT_FILE_NAME);

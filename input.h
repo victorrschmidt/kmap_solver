@@ -25,6 +25,7 @@ void checkValidSumExpression(Buffer *buffer);
 size_t getProductCount(Buffer *buffer);
 void checkValidProductExpressions(Buffer *buffer, VariableSet *variable_set);
 bool isValidProductExpression(VariableSet *set, size_t line, char *string, size_t l, size_t r);
+bool isValidVariableChar(char c);
 void checkEqualVariablesBetweenProducts(VariableSet *variable_set);
 
 #endif
