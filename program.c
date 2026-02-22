@@ -10,13 +10,13 @@ void endProgram(const char *message) {
     exit(1);
 }
 
-// Checks the program running variables
+// Checks the program's running variables
 void assertProgram() {
     bool *set = calloc(MAX_ASCII_DECIMAL_VALUE + 1, sizeof(bool));
     const char *VARIABLE_CHARS = ACCEPTED_VARIABLE_CHARS;
     const size_t ACCEPTED_VARIABLE_CHARS_COUNT = strlen(ACCEPTED_VARIABLE_CHARS);
     if (ACCEPTED_VARIABLE_CHARS_COUNT > MAX_VARIABLE_COUNT) {
-        endProgram(DEFAULT_MAX_VARIABLE_EXCEEDED_ERROR_MESSAGE );
+        endProgram(DEFAULT_MAX_VARIABLE_EXCEEDED_ERROR_MESSAGE);
     }
     for (size_t i = 0; i < ACCEPTED_VARIABLE_CHARS_COUNT; i++) {
         char c = VARIABLE_CHARS[i];

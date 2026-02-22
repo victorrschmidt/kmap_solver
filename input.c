@@ -2,7 +2,6 @@
 #include "program.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <stddef.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -109,7 +108,7 @@ void validateExpression(Buffer *buffer) {
     checkValidSumExpression(buffer);
     size_t product_count = getProductCount(buffer);
     VariableSet *variable_set = createVariableSet(product_count);
-    checkValidProductExpressions(buffer, variable_set);
+    checkAllValidProductExpressions(buffer, variable_set);
     checkEqualVariablesBetweenProducts(variable_set);
     freeVariableSet(variable_set);
 }
@@ -138,7 +137,7 @@ size_t getProductCount(Buffer *buffer) {
 }
 
 // Checks if every product expression in the Buffer content is valid
-void checkValidProductExpressions(Buffer *buffer, VariableSet *variable_set) {
+void checkAllValidProductExpressions(Buffer *buffer, VariableSet *variable_set) {
     size_t product_id = 0;
     size_t l = 0;
     for (size_t r = 1; r < buffer->length; r++) {
