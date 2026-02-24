@@ -1,5 +1,6 @@
 #ifndef PROGRAM_HEADER
 #define PROGRAM_HEADER
+#include <stddef.h>
 
 // Program constants
 #define MAX_VARIABLE_COUNT 26
@@ -27,6 +28,9 @@
 #define DEFAULT_EMPTY_NEGATION_ERROR_MESSAGE                  "Error: Invalid product expression.\nNo variable found after a negation char."
 
 void endProgram(const char *message);
+void *newMalloc(size_t size);
+void *newCalloc(size_t amount, size_t size);
+void *newRealloc(void *ptr, size_t size);
 void assertProgram();
 
 #endif

@@ -10,34 +10,19 @@ static const size_t VARIABLE_CHARS_COUNT = strlen(ACCEPTED_VARIABLE_CHARS);
 
 // Creates a Buffer struct
 Buffer *createBuffer() {
-    Buffer *buffer = malloc(sizeof(Buffer));
-    if (buffer == NULL) {
-        endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
-    }
+    Buffer *buffer = newMalloc(sizeof(Buffer));
     buffer->size = MAX_BUFFER_SIZE;
-    buffer->content = calloc(buffer->size, sizeof(char));
-    if (buffer->content == NULL)  {
-        endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
-    }
+    buffer->content = newCalloc(buffer->size, sizeof(char));
     return buffer;
 }
 
 // Creates a VariableSet struct with a specified size for its bool **content
 VariableSet *createVariableSet(size_t size) {
-    VariableSet *variable_set = malloc(sizeof(VariableSet));
-    if (variable_set == NULL) {
-        endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
-    }
+    VariableSet *variable_set = newMalloc(sizeof(VariableSet));
     variable_set->size = size;
-    variable_set->content = malloc(variable_set->size * sizeof(bool*));
-    if (variable_set->content == NULL) {
-        endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
-    }
+    variable_set->content = newMalloc(variable_set->size * sizeof(bool*));
     for (size_t i = 0; i < variable_set->size; i++) {
-        variable_set->content[i] = calloc(MAX_ASCII_DECIMAL_VALUE + 1, sizeof(bool));
-        if (variable_set->content[i] == NULL) {
-            endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
-        }
+        variable_set->content[i] = newCalloc(MAX_ASCII_DECIMAL_VALUE + 1, sizeof(bool));
     }
     return variable_set;
 }
@@ -95,10 +80,7 @@ void removeSpaces(Buffer *buffer) {
     }
     buffer->length = non_space_count;
     buffer->size = non_space_count + 1;
-    buffer->content = realloc(buffer->content, buffer->size * sizeof(char));
-    if (buffer->content == NULL) {
-        endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
-    }
+    buffer->content = newRealloc(buffer->content, buffer->size * sizeof(char));
     buffer->content[buffer->length] = '\0';
 }
 
@@ -179,7 +161,7 @@ void checkValidProductExpression(VariableSet *set, size_t id, char *string, size
     }
 }
 
-// Checks if accepted variable chars string contains c
+// Checks if the accepted variable chars string contains c
 bool isValidVariableChar(char c) {
     for (size_t i = 0; i < VARIABLE_CHARS_COUNT; i++) {
         if (c == VARIABLE_CHARS[i]) {
