@@ -120,7 +120,7 @@ void checkValidSumExpression(Buffer *buffer) {
     }
     for (size_t i = 0; i < buffer->length - 1; i++) {
         if (buffer->content[i] == SUM_CHAR && buffer->content[i + 1] == SUM_CHAR) {
-            endProgram(DEFAULT_SUM_SYMBOL_EMPTY_ERROR_MESSAGE);
+            endProgram(DEFAULT_DOUBLE_SUM_SYMBOL_ERROR_MESSAGE);
         }
     }
 }
@@ -152,7 +152,7 @@ void checkAllValidProductExpressions(Buffer *buffer, VariableSet *variable_set) 
 }
 
 // Checks if a product expression is valid
-void checkValidProductExpression(VariableSet *set, size_t line, char *string, size_t l, size_t r) {
+void checkValidProductExpression(VariableSet *set, size_t id, char *string, size_t l, size_t r) {
     bool reading_not = false;
     size_t variable_count = 0;
     for (size_t i = l; i <= r; i++) {
@@ -164,10 +164,10 @@ void checkValidProductExpression(VariableSet *set, size_t line, char *string, si
             reading_not = true;
             continue;
         }
-        if (set->content[line][(size_t) c]) {
+        if (set->content[id][(size_t) c]) {
             endProgram(DEFAULT_REPETEAD_VARIABLE_ERROR_MESSAGE);
         }
-        set->content[line][(size_t) c] = true;
+        set->content[id][(size_t) c] = true;
         variable_count++;
         reading_not = false;
     }
