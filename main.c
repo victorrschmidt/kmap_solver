@@ -16,8 +16,8 @@ int main() {
     Kmap *kmap = createKmap(buffer->content, buffer->length);
     freeBuffer(buffer);
 
+    printf("[RESULT]\n");
     solveKmap(kmap);
-    // TO DO
 
     freeKmap(kmap);
 

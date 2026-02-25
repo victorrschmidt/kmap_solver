@@ -66,7 +66,7 @@ SUM_CHAR
 ### Compile the files
 
 ```bash
-gcc main.c program.c input.c kmap.c -O2 -o run
+gcc main.c src/*.c -Iinclude -O2 -o run
 ```
 
 ### Run the executable

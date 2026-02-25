@@ -1,1 +1,1 @@
-a!bcd + !abc!d
+!a!bc + !a!b!c

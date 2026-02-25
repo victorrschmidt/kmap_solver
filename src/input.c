@@ -20,6 +20,11 @@ Buffer *createBuffer() {
 VariableSet *createVariableSet(size_t size) {
     VariableSet *variable_set = newMalloc(sizeof(VariableSet));
     variable_set->size = size;
+    variable_set->accepted_variables = newCalloc(MAX_ASCII_DECIMAL_VALUE + 1, sizeof(bool));
+    for (size_t i = 0; i < VARIABLE_CHARS_COUNT; i++) {
+        size_t c = (size_t) VARIABLE_CHARS[i];
+        variable_set->accepted_variables[c] = 1;
+    }
     variable_set->content = newMalloc(variable_set->size * sizeof(bool*));
     for (size_t i = 0; i < variable_set->size; i++) {
         variable_set->content[i] = newCalloc(MAX_ASCII_DECIMAL_VALUE + 1, sizeof(bool));
@@ -39,6 +44,7 @@ void freeVariableSet(VariableSet *variable_set) {
         free(variable_set->content[i]);
     }
     free(variable_set->content);
+    free(variable_set->accepted_variables);
     free(variable_set);
 }
 
@@ -134,26 +140,26 @@ void checkAllValidProductExpressions(Buffer *buffer, VariableSet *variable_set) 
 }
 
 // Checks if a product expression is valid
-void checkValidProductExpression(VariableSet *set, size_t id, char *string, size_t l, size_t r) {
-    bool reading_not = false;
+void checkValidProductExpression(VariableSet *variable_set, size_t id, char *string, size_t l, size_t r) {
+    bool is_reading_negation = false;
     size_t variable_count = 0;
     for (size_t i = l; i <= r; i++) {
         char c = string[i];
-        if (c != NEGATION_CHAR && !isValidVariableChar(c)) {
+        if (c != NEGATION_CHAR && !isValidVariableChar(variable_set, c)) {
             endProgram(DEFAULT_INVALID_VARIABLE_ERROR_MESSAGE);
         }
         if (c == NEGATION_CHAR) {
-            reading_not = true;
+            is_reading_negation = true;
             continue;
         }
-        if (set->content[id][(size_t) c]) {
+        if (variable_set->content[id][(size_t) c]) {
             endProgram(DEFAULT_REPETEAD_VARIABLE_ERROR_MESSAGE);
         }
-        set->content[id][(size_t) c] = true;
+        variable_set->content[id][(size_t) c] = true;
         variable_count++;
-        reading_not = false;
+        is_reading_negation = false;
     }
-    if (reading_not) {
+    if (is_reading_negation) {
         endProgram(DEFAULT_EMPTY_NEGATION_ERROR_MESSAGE);
     }
     if (variable_count < 2) {
@@ -162,13 +168,8 @@ void checkValidProductExpression(VariableSet *set, size_t id, char *string, size
 }
 
 // Checks if the accepted variable chars string contains c
-bool isValidVariableChar(char c) {
-    for (size_t i = 0; i < VARIABLE_CHARS_COUNT; i++) {
-        if (c == VARIABLE_CHARS[i]) {
-            return true;
-        }
-    }
-    return false;
+bool isValidVariableChar(VariableSet *variable_set, char c) {
+    return variable_set->accepted_variables[(size_t) c];
 }
 
 // Checks if all products share the same set of variables
