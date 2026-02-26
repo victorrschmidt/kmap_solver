@@ -9,9 +9,9 @@
 #define INPUT_FILE_NAME         "notation.txt"
 #define NEGATION_CHAR           '!'
 #define SUM_CHAR                '+'
-#define ACCEPTED_VARIABLE_CHARS "abcdefghijklmnopqrstuvwxyz"
+#define ACCEPTED_VARIABLE_CHARS "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 #define MAX_ASCII_DECIMAL_VALUE 126
-#define MAX_BUFFER_SIZE         256
+#define MAX_BUFFER_SIZE         65536
 
 // Program messages
 #define DEFAULT_MAX_VARIABLE_EXCEEDED_ERROR_MESSAGE           "Fatal error: Too much accepted variables."

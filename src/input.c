@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
 
 static const char *VARIABLE_CHARS = ACCEPTED_VARIABLE_CHARS;
 static const size_t VARIABLE_CHARS_COUNT = strlen(ACCEPTED_VARIABLE_CHARS);
@@ -51,34 +52,30 @@ void freeVariableSet(VariableSet *variable_set) {
 // Reads a line from a text file and saves its content in the Buffer content
 void readInput(Buffer *buffer) {
     FILE *input_file = fopen(INPUT_FILE_NAME, "r");
-    if (input_file == NULL) {
-        endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
-    }
+    if (input_file == NULL) endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
     fgets(buffer->content, buffer->size * sizeof(char), input_file);
     fclose(input_file);
     buffer->length = strlen(buffer->content);
-    if (buffer->length == 0) {
-        endProgram(DEFAULT_EMPTY_INPUT_ERROR_MESSAGE);
-    }
+    if (buffer->length == 0) endProgram(DEFAULT_EMPTY_INPUT_ERROR_MESSAGE);
 }
 
-// Trims a Buffer content, removing all the spaces (ASCII 32)
+// Trims a Buffer content, removing all the spaces
 void removeSpaces(Buffer *buffer) {
     size_t non_space_count = 0;
     for (size_t i = 0; i < buffer->length; i++) {
-        if (buffer->content[i] != ' ') {
+        if (!isspace(buffer->content[i])) {
             non_space_count++;
         }
     }
     size_t l = 0;
     size_t r = 1;
     while (l < non_space_count) {
-        if (buffer->content[l] != ' ') {
+        if (!isspace(buffer->content[l])) {
             l++;
             r++;
             continue;
         }
-        while (r < buffer->length && buffer->content[r] == ' ') r++;
+        while (r < buffer->length && isspace(buffer->content[r])) r++;
         buffer->content[l] = buffer->content[r];
         buffer->content[r] = ' ';
         l++;

@@ -11,9 +11,11 @@ int main() {
 
     printf("Checking expression...\n");
     validateExpression(buffer);
-    printf("Expression checked.\n");
+    printf("Expression checked.\n\n");
 
     Kmap *kmap = createKmap(buffer->content, buffer->length);
+    debugKmap(kmap);
+
     freeBuffer(buffer);
 
     printf("[RESULT]\n");
