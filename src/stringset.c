@@ -5,12 +5,14 @@
 #include <stdbool.h>
 #include <string.h>
 
+// Initializes a StringSet struct
 void initStringSet(StringSet *string_set) {
     for (size_t i = 0; i < HASH_TABLE_SIZE; i++) {
         string_set->buckets[i] = NULL;
     }
 }
 
+// Frees a StringSet struct
 void freeStringSet(StringSet *string_set) {
     for (size_t i = 0; i < HASH_TABLE_SIZE; i++) {
         Node *node = string_set->buckets[i];
@@ -24,6 +26,7 @@ void freeStringSet(StringSet *string_set) {
     free(string_set);
 }
 
+// Returns the hash key for a given string
 unsigned int hashNumber(const char *string) {
     unsigned int hash = 5381;
     for (size_t i = 0; string[i] != '\0'; i++) {
@@ -33,6 +36,7 @@ unsigned int hashNumber(const char *string) {
     return hash % HASH_TABLE_SIZE;
 }
 
+// Checks if a StringSet struct contains the given string
 bool containsStringSet(StringSet *string_set, const char *string) {
     unsigned int index = hashNumber(string);
     Node *current = string_set->buckets[index];
@@ -43,10 +47,11 @@ bool containsStringSet(StringSet *string_set, const char *string) {
     return false;
 }
 
+// Inserts a given string into the StringSet struct
 void insertStringSet(StringSet *string_set, const char *string) {
     if (containsStringSet(string_set, string)) return;
     unsigned int index = hashNumber(string);
-    Node *node = newCalloc(1, sizeof(Node));
+    Node *node = newMalloc(sizeof(Node));
     size_t length = strlen(string);
     node->string = newMalloc((length + 1) * sizeof(char));
     strcpy(node->string, string);

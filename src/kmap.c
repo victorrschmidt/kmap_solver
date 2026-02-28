@@ -1,6 +1,6 @@
 #include "kmap.h"
-#include "stringset.h"
 #include "program.h"
+#include "stringset.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -68,8 +68,8 @@ void freeKmap(Kmap *kmap) {
         free(kmap->used_matrix[i]);
         free(kmap->prefix_sum_matrix[i]);
     }
-    freeStringSet(kmap->expressions);
     free(kmap->prefix_sum_matrix[kmap->lines]);
+    freeStringSet(kmap->expressions);
     free(kmap->matrix);
     free(kmap->used_matrix);
     free(kmap->prefix_sum_matrix);
@@ -103,13 +103,13 @@ int toGrayCode(int n) {
     return n ^ (n >> 1);
 }
 
-// Solves a Kmap and show the resulting sum of products expression
+// Solves a Kmap
 void solveKmap(Kmap *kmap) {
     fillPrefixSumMatrix(kmap);
     Rectangle full_matrix = {0, 0, kmap->lines - 1, kmap->columns - 1};
     int total_sum = getRectangleSum(kmap->prefix_sum_matrix, full_matrix);
     if (total_sum == (int) kmap->lines * kmap->columns) {
-        printf("The expression is true for all cases.\n");
+        printf(DEFAULT_COMPLETE_KMAP_MESSAGE);
         return;
     }
     Rectangle *rectangles = newMalloc(2 * sizeof(Rectangle));
@@ -323,15 +323,18 @@ void buildExpression(Kmap *kmap, Rectangle *rectangle_list, size_t size) {
 
 // Shows the optimal expression after simplifying with kmap
 void showFinalExpression(Kmap *kmap) {
+    FILE *output_file = fopen(OUTPUT_FILE_NAME, "w");
+    if (output_file == NULL) endProgram(DEFAULT_MEMORY_ALLOCATION_ERROR_MESSAGE);
     bool flag = 1;
     for (size_t i = 0; i < HASH_TABLE_SIZE; i++) {
         Node *node = kmap->expressions->buckets[i];
         while (node != NULL) {
-            if (!flag) printf(" %c ", SUM_CHAR);
+            if (!flag) fprintf(output_file, " %c ", SUM_CHAR);
             flag = 0;
-            printf("%s", node->string);
+            fprintf(output_file, "%s", node->string);
             node = node->next;
         }
     }
-    printf("\n");
+    fprintf(output_file, "\n");
+    fclose(output_file);
 }

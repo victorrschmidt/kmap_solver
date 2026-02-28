@@ -18,7 +18,7 @@ int main() {
 
     freeBuffer(buffer);
 
-    printf("[RESULT]\n");
+    printf("[RESULT]\n%s\n", OUTPUT_FILE_NAME);
     solveKmap(kmap);
 
     freeKmap(kmap);

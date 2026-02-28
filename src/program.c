@@ -13,21 +13,21 @@ void endProgram(const char *message) {
 // Returns a pointer to a block of memory reserved by malloc
 void *newMalloc(size_t size) {
     void *ptr = malloc(size);
-    if (ptr == NULL) endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
+    if (ptr == NULL) endProgram(DEFAULT_MEMORY_ALLOCATION_ERROR_MESSAGE);
     return ptr;
 }
 
 // Returns a pointer to a block of memory reserved by calloc
 void *newCalloc(size_t amount, size_t size) {
     void *ptr = calloc(amount, size);
-    if (ptr == NULL) endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
+    if (ptr == NULL) endProgram(DEFAULT_MEMORY_ALLOCATION_ERROR_MESSAGE);
     return ptr;
 }
 
 // Returns a pointer to a block of memory reserved by realloc
 void *newRealloc(void *ptr, size_t size) {
     void *nptr = realloc(ptr, size);
-    if (nptr == NULL) endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
+    if (nptr == NULL) endProgram(DEFAULT_MEMORY_ALLOCATION_ERROR_MESSAGE);
     return nptr;
 }
 
@@ -37,7 +37,7 @@ void assertProgram() {
     const char *VARIABLE_CHARS = ACCEPTED_VARIABLE_CHARS;
     const size_t ACCEPTED_VARIABLE_CHARS_COUNT = strlen(ACCEPTED_VARIABLE_CHARS);
     if (ACCEPTED_VARIABLE_CHARS_COUNT > MAX_VARIABLE_COUNT) {
-        endProgram(DEFAULT_MAX_VARIABLE_EXCEEDED_ERROR_MESSAGE);
+        endProgram(DEFAULT_MAX_VARIABLE_AMOUNT_EXCEEDED_ERROR_MESSAGE);
     }
     for (size_t i = 0; i < ACCEPTED_VARIABLE_CHARS_COUNT; i++) {
         char c = VARIABLE_CHARS[i];

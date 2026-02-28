@@ -4,7 +4,7 @@
 
 ### Create a sum of products expression
 
-In `notation.txt`, insert a sum of products expression in the following format:
+In `notation.in`, insert a sum of products expression in the following format:
 
 ```
 P + P + ... + P
@@ -23,7 +23,7 @@ represent the complement of the following variable.
 ### Example of a valid expression
 
 ```
-abc!d + ab!cd + !a!bc!d + abcd
+ABC!D + AB!CD + !A!BC!D + ABCD
 ```
 
 ## Program configs
@@ -38,7 +38,7 @@ MAX_VARIABLE_COUNT
 You can change it, but its value should not be greater than 30, since it will
 cause bit shifting errors.
 
-The set of chars used to represent variables are defined in program.h, int the
+The set of chars used to represent variables are defined in program.h, in the
 macro:
 
 ```c
@@ -60,6 +60,8 @@ and
 ```c
 SUM_CHAR
 ```
+
+The resulting expression will be shown at `result.out`.
 
 ## How to run
 

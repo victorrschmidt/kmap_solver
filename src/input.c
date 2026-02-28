@@ -6,9 +6,6 @@
 #include <string.h>
 #include <ctype.h>
 
-static const char *VARIABLE_CHARS = ACCEPTED_VARIABLE_CHARS;
-static const size_t VARIABLE_CHARS_COUNT = strlen(ACCEPTED_VARIABLE_CHARS);
-
 // Creates a Buffer struct
 Buffer *createBuffer() {
     Buffer *buffer = newMalloc(sizeof(Buffer));
@@ -19,6 +16,8 @@ Buffer *createBuffer() {
 
 // Creates a VariableSet struct with a specified size for its bool **content
 VariableSet *createVariableSet(size_t size) {
+    const char *VARIABLE_CHARS = ACCEPTED_VARIABLE_CHARS;
+    const size_t VARIABLE_CHARS_COUNT = strlen(ACCEPTED_VARIABLE_CHARS);
     VariableSet *variable_set = newMalloc(sizeof(VariableSet));
     variable_set->size = size;
     variable_set->accepted_variables = newCalloc(MAX_ASCII_DECIMAL_VALUE + 1, sizeof(bool));
@@ -52,11 +51,12 @@ void freeVariableSet(VariableSet *variable_set) {
 // Reads a line from a text file and saves its content in the Buffer content
 void readInput(Buffer *buffer) {
     FILE *input_file = fopen(INPUT_FILE_NAME, "r");
-    if (input_file == NULL) endProgram(DEFAULT_ALLOCATION_ERROR_MESSAGE);
+    if (input_file == NULL) endProgram(DEFAULT_MEMORY_ALLOCATION_ERROR_MESSAGE);
     fgets(buffer->content, buffer->size * sizeof(char), input_file);
     fclose(input_file);
     buffer->length = strlen(buffer->content);
     if (buffer->length == 0) endProgram(DEFAULT_EMPTY_INPUT_ERROR_MESSAGE);
+    removeSpaces(buffer);
 }
 
 // Trims a Buffer content, removing all the spaces
@@ -89,7 +89,6 @@ void removeSpaces(Buffer *buffer) {
 
 // Validate a sum of products expression
 void validateExpression(Buffer *buffer) {
-    removeSpaces(buffer);
     checkValidSumExpression(buffer);
     size_t product_count = getProductCount(buffer);
     VariableSet *variable_set = createVariableSet(product_count);
@@ -150,7 +149,7 @@ void checkValidProductExpression(VariableSet *variable_set, size_t id, char *str
             continue;
         }
         if (variable_set->content[id][(size_t) c]) {
-            endProgram(DEFAULT_REPETEAD_VARIABLE_ERROR_MESSAGE);
+            endProgram(DEFAULT_REPEATED_VARIABLE_ERROR_MESSAGE);
         }
         variable_set->content[id][(size_t) c] = true;
         variable_count++;
